@@ -9,7 +9,16 @@ module.exports = {
   ],
   presets: [require("nativewind/preset")],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        base: {
+          100: "#1a1a1a", // Dark background
+          200: "#262626", // Dark surface
+          300: "#333333", // Card/Panel background
+          content: "#fefbee", // Creamy text
+        },
+      },
+    },
   },
   plugins: [],
 };
