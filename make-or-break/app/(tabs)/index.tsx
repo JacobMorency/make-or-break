@@ -5,10 +5,12 @@ import { useState } from "react";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import CircularProgress from "react-native-circular-progress-indicator";
+
 export default function HomeScreen() {
   // Example habit data - in real app, this will come from state/API
   const [habits, setHabits] = useState([
-    { icon: "dumbbell", name: "Exercise", goalAmount: 3, currentAmount: 1 },
+    { icon: "dumbbell", name: "Exercise", goalAmount: 3, currentAmount: 0 },
     { icon: "book", name: "Read", goalAmount: 5, currentAmount: 2 },
     { icon: "water", name: "Drink Water", goalAmount: 8, currentAmount: 4 },
   ]);
@@ -38,7 +40,7 @@ export default function HomeScreen() {
         <Text className="text-text font-bold text-3xl">Today (Hard Coded)</Text>
       </View>
       <View className="items-center">
-        <CircleProgress />
+        <CircularProgress value={64} activeStrokeColor={"#3b82f6"} />
       </View>
       <View>
         <Text className="text-text font-bold text-2xl">Weekly Goals</Text>

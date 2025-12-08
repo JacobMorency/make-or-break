@@ -30,7 +30,7 @@ export default function HabitCard({
           <FontAwesome5 name={icon} size={24} color="text" />
           <View>
             <Text className="text-text">{name}</Text>
-            <Text className="text-text text-xs">Goal: {currentAmount}</Text>
+            <Text className="text-text text-xs">Goal: {goalAmount}</Text>
           </View>
         </View>
         <CircleProgressButton

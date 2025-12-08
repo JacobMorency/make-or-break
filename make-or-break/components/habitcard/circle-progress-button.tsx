@@ -1,5 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import { useState } from "react";
+import CircularProgress from "react-native-circular-progress-indicator";
 
 type CircleProgressButtonProps = {
   currentAmount: number;
@@ -15,12 +16,19 @@ export default function CircleProgressButton({
   return (
     <View>
       <Pressable
-        className="bg-bg rounded-full w-12 h-12 items-center justify-center"
+        className="items-center justify-center"
         onPress={() => {
           setCurrentAmount(currentAmount + 1);
         }}
       >
-        <Text className="text-text">{currentAmount}</Text>
+        <CircularProgress
+          value={currentAmount}
+          title={currentAmount === targetAmount ? "Done" : ""}
+          radius={24}
+          maxValue={targetAmount}
+          activeStrokeColor={"#3b82f6"}
+        />
+        {/* <Text className="text-text">{currentAmount}</Text> */}
       </Pressable>
     </View>
   );
