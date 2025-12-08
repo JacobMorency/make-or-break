@@ -27,7 +27,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-bg gap-4">
+    <SafeAreaView className="flex-1 bg-bg gap-4 p-2">
       <View className="flex-row justify-end gap-4">
         <Pressable className="bg-card p-2 rounded-full">
           <Text className="text-text">Edit</Text>
