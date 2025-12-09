@@ -1,6 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import HabitCard from "@/components/habitcard/habitcard";
 import { useState } from "react";
+import { useRouter } from "expo-router";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -9,6 +10,8 @@ import CircularProgress from "react-native-circular-progress-indicator";
 import HabitDetailModal from "@/components/habit-detail-modal";
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   // Example habit data - in real app, this will come from state/API
   const [habits, setHabits] = useState([
     { icon: "dumbbell", name: "Exercise", goalAmount: 3, currentAmount: 0 },
@@ -57,7 +60,10 @@ export default function HomeScreen() {
           <Pressable className="bg-card p-2 rounded-full">
             <Text className="text-text">Edit</Text>
           </Pressable>
-          <Pressable className="bg-card p-2 rounded-full">
+          <Pressable
+            className="bg-card p-2 rounded-full"
+            onPress={() => router.push("/add-habit")}
+          >
             <Text className="text-text">+</Text>
           </Pressable>
         </View>

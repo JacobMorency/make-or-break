@@ -71,12 +71,12 @@ function ModalOverlay({
 
   return (
     <View className="flex-1 bg-black/50 justify-end">
-      <View className="bg-bg rounded-t-3xl p-6">
+      <View className="bg-card rounded-t-3xl p-6">
         <View className="mb-6">
-          <Text className="text-text font-bold text-2xl mb-2">
+          <Text className="text-text font-bold text-4xl mb-2 text-center">
             {habit.name}
           </Text>
-          <Text className="text-text/70 text-base">
+          <Text className="text-text text-center">
             Goal: {habit.goalAmount}
           </Text>
         </View>

@@ -22,6 +22,14 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="add-habit"
+            options={{
+              title: "Add Habit",
+              presentation: "card",
+              headerBackTitle: "Back",
+            }}
+          />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
