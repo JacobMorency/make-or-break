@@ -1,7 +1,6 @@
-import { View, Text, Pressable, Modal } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import CircleProgressButton from "@/components/habitcard/circle-progress-button";
-import { useState } from "react";
 
 type HabitCardProps = {
   icon?: string;
