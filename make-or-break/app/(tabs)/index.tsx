@@ -43,7 +43,6 @@ export default function HomeScreen() {
         <CircularProgress value={64} activeStrokeColor={"#3b82f6"} />
       </View>
       <View>
-        <Text className="text-text font-bold text-2xl">Weekly Goals</Text>
         {habits.map((habit, index) => (
           <HabitCard
             key={index}

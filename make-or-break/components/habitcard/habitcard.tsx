@@ -21,15 +21,17 @@ export default function HabitCard({
   return (
     <View>
       <Pressable
-        className="bg-card flex-row p-2 rounded-xl items-center justify-between my-1"
+        className="bg-card flex-row p-2 rounded-xl items-center justify-between my-1 shadow-sm"
         onPress={() => {
           console.log("modal opens");
         }}
       >
         <View className="flex-row items-center gap-3">
-          <FontAwesome5 name={icon} size={24} color="text" />
+          <View className="w-10">
+            <FontAwesome5 name={icon} size={24} color="text" />
+          </View>
           <View>
-            <Text className="text-text">{name}</Text>
+            <Text className="text-text font-bold">{name}</Text>
             <Text className="text-text text-xs">Goal: {goalAmount}</Text>
           </View>
         </View>
