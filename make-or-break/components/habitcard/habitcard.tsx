@@ -9,6 +9,7 @@ type HabitCardProps = {
   goalAmount?: number;
   currentAmount?: number;
   onIncrement?: (newAmount: number) => void;
+  onPress?: () => void;
 };
 
 export default function HabitCard({
@@ -17,14 +18,13 @@ export default function HabitCard({
   goalAmount = 0,
   currentAmount = 0,
   onIncrement,
+  onPress,
 }: HabitCardProps) {
   return (
     <View>
       <Pressable
         className="bg-card flex-row p-2 rounded-xl items-center justify-between my-1 shadow-sm"
-        onPress={() => {
-          console.log("modal opens");
-        }}
+        onPress={onPress}
       >
         <View className="flex-row items-center gap-3">
           <View className="w-10">
@@ -37,7 +37,7 @@ export default function HabitCard({
         </View>
         <CircleProgressButton
           currentAmount={currentAmount}
-          targetAmount={3}
+          targetAmount={goalAmount}
           setCurrentAmount={(newAmount) => {
             onIncrement?.(newAmount);
           }}
