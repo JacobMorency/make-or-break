@@ -46,15 +46,12 @@ function ModalOverlay({
   onClose: () => void;
   onUpdate: (newAmount: number) => void;
 }) {
-  // Track currentAmount locally in the modal
   const [currentAmount, setCurrentAmount] = useState(habit.currentAmount);
 
-  // Update local state when habit prop changes
   useEffect(() => {
     setCurrentAmount(habit.currentAmount);
   }, [habit.currentAmount]);
 
-  // Save changes when modal closes
   const handleClose = () => {
     onUpdate(currentAmount);
     onClose();
@@ -75,7 +72,6 @@ function ModalOverlay({
   return (
     <View className="flex-1 bg-black/50 justify-end">
       <View className="bg-bg rounded-t-3xl p-6">
-        {/* Habit Name and Goal */}
         <View className="mb-6">
           <Text className="text-text font-bold text-2xl mb-2">
             {habit.name}
@@ -85,9 +81,7 @@ function ModalOverlay({
           </Text>
         </View>
 
-        {/* CircularProgress with +/- buttons */}
         <View className="flex-row items-center justify-center mb-6">
-          {/* Minus Button */}
           <Pressable
             onPress={handleDecrement}
             disabled={currentAmount === 0}
@@ -115,7 +109,6 @@ function ModalOverlay({
             </CircularProgressBase>
           </View>
 
-          {/* Plus Button */}
           <Pressable
             onPress={handleIncrement}
             className="w-16 h-16 rounded-full bg-primary items-center justify-center"
@@ -124,7 +117,6 @@ function ModalOverlay({
           </Pressable>
         </View>
 
-        {/* Close Button */}
         <Pressable
           onPress={handleClose}
           className="bg-card py-3 px-6 rounded-xl items-center"
