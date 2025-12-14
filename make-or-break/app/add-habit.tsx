@@ -2,7 +2,11 @@ import { View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AddHabitCard from "@/components/add-habit-card";
 import { useState } from "react";
+import { useRouter } from "expo-router";
 import AddHabitModal from "@/components/habitcard/add-habit-modal";
+import { storage } from "@/utils/asyncStorage";
+
+const STORAGE_KEY = "habits";
 
 type HabitTemplate = {
   icon: string;
@@ -10,6 +14,8 @@ type HabitTemplate = {
 };
 
 export default function AddHabitScreen() {
+  const router = useRouter();
+
   const [habitTemplates, setHabitTemplates] = useState<HabitTemplate[]>([
     {
       icon: "water",
@@ -38,23 +44,36 @@ export default function AddHabitScreen() {
     setIsModalOpen(false);
     setSelectedTemplate(null);
   };
-  // const addHabit = (
-  //   icon: string,
-  //   name: string,
-  //   goalAmount: number,
-  //   currentAmount: number
-  // ): void => {
-  //   setHabits((prevHabits) => {
-  //     const updated = [...prevHabits];
-  //     updated.push({
-  //       icon: icon,
-  //       name: name,
-  //       goalAmount: goalAmount,
-  //       currentAmount: currentAmount,
-  //     });
-  //     return updated;
-  //   });
-  // };
+
+  const handleSaveHabit = async (habit: {
+    icon: string;
+    name: string;
+    goalAmount: number;
+  }) => {
+    try {
+      const existingHabits =
+        (await storage.getItem<
+          Array<{
+            icon: string;
+            name: string;
+            goalAmount: number;
+            currentAmount: number;
+          }>
+        >(STORAGE_KEY)) || [];
+
+      const newHabit = {
+        ...habit,
+        currentAmount: 0,
+      };
+
+      await storage.setItem(STORAGE_KEY, [...existingHabits, newHabit]);
+
+      router.back();
+    } catch (error) {
+      console.error("Error saving habit:", error);
+    }
+  };
+
   return (
     <>
       <SafeAreaView className="flex-1 bg-bg p-2">
@@ -89,6 +108,7 @@ export default function AddHabitScreen() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         habitTemplate={selectedTemplate}
+        onSave={handleSaveHabit}
       />
     </>
   );
