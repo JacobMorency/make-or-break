@@ -30,6 +30,14 @@ export default function RootLayout() {
               headerBackTitle: "Back",
             }}
           />
+          <Stack.Screen
+            name="dev-storage"
+            options={{
+              title: "Dev Storage Editor",
+              presentation: "card",
+              headerBackTitle: "Back",
+            }}
+          />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>

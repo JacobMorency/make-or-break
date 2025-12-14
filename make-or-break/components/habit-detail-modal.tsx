@@ -2,13 +2,7 @@ import { useState, useEffect } from "react";
 import { Modal, View, Text, Pressable } from "react-native";
 import { CircularProgressBase } from "react-native-circular-progress-indicator";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-
-type Habit = {
-  icon: string;
-  name: string;
-  goalAmount: number;
-  currentAmount: number;
-};
+import type { Habit } from "@/types/habit";
 
 type HabitDetailModalProps = {
   isOpen: boolean;

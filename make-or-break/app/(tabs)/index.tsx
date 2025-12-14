@@ -11,20 +11,14 @@ import CircularProgress from "react-native-circular-progress-indicator";
 import HabitDetailModal from "@/components/habit-detail-modal";
 
 import { storage } from "@/utils/asyncStorage";
+import type { Habit } from "@/types/habit";
 
 const STORAGE_KEY = "habits";
-
-// Default habits to use if nothing is in storage
-const defaultHabits = [
-  { icon: "dumbbell", name: "Exercise", goalAmount: 3, currentAmount: 0 },
-  { icon: "book", name: "Read", goalAmount: 5, currentAmount: 2 },
-  { icon: "water", name: "Drink Water", goalAmount: 8, currentAmount: 4 },
-];
 
 export default function HomeScreen() {
   const router = useRouter();
 
-  const [habits, setHabits] = useState<typeof defaultHabits>([]);
+  const [habits, setHabits] = useState<Habit[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [selectedHabit, setSelectedHabit] = useState<{
@@ -43,60 +37,32 @@ export default function HomeScreen() {
     });
   };
 
-  const addHabit = (
-    icon: string,
-    name: string,
-    goalAmount: number,
-    currentAmount: number
-  ): void => {
-    setHabits((prevHabits) => {
-      const updated = [...prevHabits];
-      updated.push({
-        icon: icon,
-        name: name,
-        goalAmount: goalAmount,
-        currentAmount: currentAmount,
-      });
-      return updated;
-    });
-  };
-
   // Helper function to load habits from storage
   const loadHabits = useCallback(async () => {
     try {
-      const storedHabits =
-        await storage.getItem<typeof defaultHabits>(STORAGE_KEY);
+      const storedHabits = await storage.getItem<Habit[]>(STORAGE_KEY);
       if (storedHabits) {
         setHabits(storedHabits);
-        // } else {
-        //   // If no stored habits, use defaults
-        //   setHabits(defaultHabits);
       }
     } catch (error) {
       console.error("Error loading habits:", error);
-      // On error, use defaults
-      setHabits(defaultHabits);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  // Step 3: Load habits from storage when component mounts
   useEffect(() => {
     loadHabits();
   }, [loadHabits]);
 
-  // Reload habits when screen comes into focus (e.g., returning from add-habit page)
   useFocusEffect(
     useCallback(() => {
       if (!isLoading) {
-        // Only reload if we're not in the initial loading state
         loadHabits();
       }
     }, [loadHabits, isLoading])
   );
 
-  // Step 4: Save habits to storage whenever they change (but not during initial load)
   useEffect(() => {
     if (!isLoading) {
       const saveHabits = async () => {
@@ -115,6 +81,12 @@ export default function HomeScreen() {
     <>
       <SafeAreaView className="flex-1 bg-bg gap-4 p-2">
         <View className="flex-row justify-end gap-2">
+          <Pressable
+            className="bg-card p-2 rounded-full"
+            onPress={() => router.push("/dev-storage")}
+          >
+            <Text className="text-text text-xs">Dev</Text>
+          </Pressable>
           <Pressable className="bg-card p-2 rounded-full">
             <Text className="text-text">Edit</Text>
           </Pressable>
@@ -149,12 +121,6 @@ export default function HomeScreen() {
               }}
             />
           ))}
-        </View>
-        <View>
-          <Text className="text-text font-bold text-2xl ">Weekly Goals</Text>
-          <HabitCard />
-          <HabitCard />
-          <HabitCard />
         </View>
       </SafeAreaView>
       <HabitDetailModal

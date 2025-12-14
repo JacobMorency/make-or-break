@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import AddHabitModal from "@/components/habitcard/add-habit-modal";
 import { storage } from "@/utils/asyncStorage";
+import type { Habit } from "@/types/habit";
 
 const STORAGE_KEY = "habits";
 
@@ -52,16 +53,9 @@ export default function AddHabitScreen() {
   }) => {
     try {
       const existingHabits =
-        (await storage.getItem<
-          Array<{
-            icon: string;
-            name: string;
-            goalAmount: number;
-            currentAmount: number;
-          }>
-        >(STORAGE_KEY)) || [];
+        (await storage.getItem<Habit[]>(STORAGE_KEY)) || [];
 
-      const newHabit = {
+      const newHabit: Habit = {
         ...habit,
         currentAmount: 0,
       };
