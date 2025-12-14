@@ -56,7 +56,7 @@ export default function HomeScreen() {
   return (
     <>
       <SafeAreaView className="flex-1 bg-bg gap-4 p-2">
-        <View className="flex-row justify-end gap-4">
+        <View className="flex-row justify-end gap-2">
           <Pressable className="bg-card p-2 rounded-full">
             <Text className="text-text">Edit</Text>
           </Pressable>
@@ -64,7 +64,7 @@ export default function HomeScreen() {
             className="bg-card p-2 rounded-full"
             onPress={() => router.push("/add-habit")}
           >
-            <Text className="text-text">+</Text>
+            <Text className="text-text text-center">+</Text>
           </Pressable>
         </View>
         <View>
