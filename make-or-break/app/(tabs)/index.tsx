@@ -79,7 +79,7 @@ export default function HomeScreen() {
 
   return (
     <>
-      <SafeAreaView className="flex-1 bg-bg gap-4 p-2">
+      <SafeAreaView className="flex-1 bg-bg gap-4 p-4">
         <View className="flex-row justify-end gap-2">
           <Pressable
             className="bg-card p-2 rounded-full"
@@ -103,7 +103,11 @@ export default function HomeScreen() {
           </Text>
         </View>
         <View className="items-center">
-          <CircularProgress value={64} activeStrokeColor={"#3b82f6"} />
+          <CircularProgress
+            value={64}
+            activeStrokeColor={"#3b82f6"}
+            valueSuffix={"%"}
+          />
         </View>
         <View>
           {habits.map((habit, index) => (

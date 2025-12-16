@@ -38,6 +38,14 @@ export default function RootLayout() {
               headerBackTitle: "Back",
             }}
           />
+          <Stack.Screen
+            name="icon-selector"
+            options={{
+              title: "Icon",
+              presentation: "card",
+              headerBackTitle: "Back",
+            }}
+          />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
