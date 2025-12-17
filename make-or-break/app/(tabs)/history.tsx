@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HistoryScreen() {
   return (
-    <SafeAreaView className="flex-1 bg-bg ">
+    <SafeAreaView className="flex-1 bg-bg p-4">
       <View>
         <Text className="text-text ">Testing Text history</Text>
       </View>

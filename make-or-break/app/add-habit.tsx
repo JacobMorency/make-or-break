@@ -70,7 +70,7 @@ export default function AddHabitScreen() {
 
   return (
     <>
-      <SafeAreaView className="flex-1 bg-bg p-2">
+      <SafeAreaView className="flex-1 bg-bg p-4">
         <View>
           <Text className="text-text text-3xl font-bold">Add New Habit</Text>
           <View>
