@@ -15,6 +15,12 @@ import WeeklyDaysProgress from "@/components/weekly-days-progress";
 
 import { storage } from "@/utils/asyncStorage";
 import { migrateHabitsWithIds } from "@/utils/habitMigration";
+import {
+  performFullSync,
+  syncHabitsToSupabase,
+  syncDailyProgressToSupabase,
+} from "@/utils/syncService";
+import { subscribeToNetworkChanges } from "@/utils/networkService";
 import type { Habit } from "@/types/habit";
 
 const STORAGE_KEY = "habits";
@@ -145,6 +151,8 @@ export default function HomeScreen() {
             const updatedHabits = habits.filter((h) => h.id !== habitId);
             setHabits(updatedHabits);
             await storage.setItem(STORAGE_KEY, updatedHabits);
+            // Sync after delete
+            syncHabitsToSupabase().catch(console.error);
           },
         },
       ]
@@ -164,6 +172,8 @@ export default function HomeScreen() {
     });
     setIsEditMode(false);
     setHabitToEdit(null);
+    // Sync after update
+    syncHabitsToSupabase().catch(console.error);
   };
 
   // Helper function to load habits from storage
@@ -211,6 +221,29 @@ export default function HomeScreen() {
     loadHabits();
   }, [loadHabits]);
 
+  // Setup network listener for sync
+  useEffect(() => {
+    const unsubscribe = subscribeToNetworkChanges(async (state) => {
+      if (state.isWiFi && !isLoading) {
+        // Sync when WiFi connects
+        console.log("WiFi connected, performing sync...");
+        await performFullSync();
+      }
+    });
+
+    return () => unsubscribe();
+  }, [isLoading]);
+
+  // Initial sync on mount (if WiFi available)
+  useEffect(() => {
+    const initialSync = async () => {
+      if (!isLoading) {
+        await performFullSync();
+      }
+    };
+    initialSync();
+  }, [isLoading]);
+
   useFocusEffect(
     useCallback(() => {
       if (!isLoading) {
@@ -238,6 +271,14 @@ export default function HomeScreen() {
 
           await storage.setItem(DAILY_PROGRESS_KEY, currentDailyProgress);
           setDailyProgress(currentDailyProgress);
+
+          // Sync to Supabase (background, don't wait)
+          syncHabitsToSupabase().catch((error) => {
+            console.error("Background sync failed:", error);
+          });
+          syncDailyProgressToSupabase().catch((error) => {
+            console.error("Background progress sync failed:", error);
+          });
         } catch (error) {
           console.error("Error saving habits:", error);
         }

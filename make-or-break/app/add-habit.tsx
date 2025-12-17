@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import AddHabitModal from "@/components/habitcard/add-habit-modal";
 import { storage } from "@/utils/asyncStorage";
+import { syncHabitsToSupabase } from "@/utils/syncService";
 import type { Habit } from "@/types/habit";
 
 const STORAGE_KEY = "habits";
@@ -62,6 +63,9 @@ export default function AddHabitScreen() {
       };
 
       await storage.setItem(STORAGE_KEY, [...existingHabits, newHabit]);
+
+      // Sync to Supabase (background)
+      syncHabitsToSupabase().catch(console.error);
 
       router.back();
     } catch (error) {
