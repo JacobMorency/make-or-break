@@ -10,33 +10,27 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import type { Habit } from "@/types/habit";
 
-type HabitTemplate = {
-  icon: string;
-  name: string;
-};
-
-type AddHabitModalProps = {
+type EditHabitModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  habitTemplate: HabitTemplate | null;
-  onSave?: (habit: { icon: string; name: string; goalAmount: number }) => void;
+  habit: Habit | null;
+  onSave?: (habit: Habit) => void;
 };
 
-export default function AddHabitModal({
+export default function EditHabitModal({
   isOpen,
   onClose,
-  habitTemplate,
+  habit,
   onSave,
-}: AddHabitModalProps) {
+}: EditHabitModalProps) {
   const [habitName, setHabitName] = useState("");
   const [goalAmount, setGoalAmount] = useState("1");
   const [selectedIcon, setSelectedIcon] = useState("question-circle");
   const [currentView, setCurrentView] = useState<"form" | "iconSelector">(
     "form"
   );
-
-  const CUSTOM_HABIT_TEXT = "Create a custom habit";
 
   // Common FontAwesome5 icons for habits
   const availableIcons = [
@@ -68,23 +62,21 @@ export default function AddHabitModal({
   ];
 
   useEffect(() => {
-    if (habitTemplate) {
-      setHabitName(habitTemplate.name);
-      setSelectedIcon(habitTemplate.icon);
-    } else {
-      setHabitName("");
-      setSelectedIcon("question-circle");
+    if (habit) {
+      setHabitName(habit.name);
+      setSelectedIcon(habit.icon);
+      setGoalAmount(habit.goalAmount.toString());
     }
-    setGoalAmount("1");
-    setCurrentView("form"); // Reset to form view when modal opens/closes
-  }, [habitTemplate, isOpen]);
+    setCurrentView("form");
+  }, [habit, isOpen]);
 
   const handleSave = () => {
     const goal = parseInt(goalAmount) || 1;
-    if (habitName.trim() && goal > 0) {
+    if (habitName.trim() && goal > 0 && habit) {
       onSave?.({
-        icon: selectedIcon,
+        ...habit,
         name: habitName.trim(),
+        icon: selectedIcon,
         goalAmount: goal,
       });
       onClose();
@@ -92,6 +84,8 @@ export default function AddHabitModal({
   };
 
   const isFormValid = habitName.trim().length > 0 && parseInt(goalAmount) > 0;
+
+  if (!habit) return null;
 
   return (
     <Modal
@@ -114,7 +108,6 @@ export default function AddHabitModal({
                 onClose={onClose}
                 onSave={handleSave}
                 isFormValid={isFormValid}
-                customHabitText={CUSTOM_HABIT_TEXT}
               />
             ) : (
               <IconSelectorView
@@ -145,7 +138,6 @@ type FormViewProps = {
   onClose: () => void;
   onSave: () => void;
   isFormValid: boolean;
-  customHabitText: string;
 };
 
 function FormView({
@@ -158,7 +150,6 @@ function FormView({
   onClose,
   onSave,
   isFormValid,
-  customHabitText,
 }: FormViewProps) {
   return (
     <View className="flex-1">
@@ -171,7 +162,7 @@ function FormView({
           >
             <AntDesign name="close" size={24} color="#3b82f6" />
           </Pressable>
-          <Text className="text-text font-bold text-2xl">New Habit</Text>
+          <Text className="text-text font-bold text-2xl">Edit Habit</Text>
           <Pressable
             onPress={onSave}
             disabled={!isFormValid}
@@ -190,7 +181,7 @@ function FormView({
           </Text>
           <View className="bg-bg rounded-xl p-4">
             <TextInput
-              value={habitName === customHabitText ? "" : habitName}
+              value={habitName}
               onChangeText={setHabitName}
               placeholder="Enter habit name"
               placeholderTextColor="#9CA3AF"
@@ -290,3 +281,4 @@ function IconSelectorView({
     </View>
   );
 }
+

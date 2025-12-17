@@ -56,6 +56,7 @@ export default function AddHabitScreen() {
         (await storage.getItem<Habit[]>(STORAGE_KEY)) || [];
 
       const newHabit: Habit = {
+        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         ...habit,
         currentAmount: 0,
       };

@@ -20,7 +20,7 @@ export default function AddHabitCard({
       >
         <View className="flex-row gap-3 items-center">
           <View className="w-10">
-            <FontAwesome5 name={icon} size={24} />
+            <FontAwesome5 name={icon} size={24} color="#3b82f6" />
           </View>
           <Text className="text-text">{name}</Text>
         </View>

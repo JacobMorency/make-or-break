@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Alert } from "react-native";
 import HabitCard from "@/components/habitcard/habitcard";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "expo-router";
@@ -10,12 +10,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { CircularProgressBase } from "react-native-circular-progress-indicator";
 
 import HabitDetailModal from "@/components/habit-detail-modal";
+import EditHabitModal from "@/components/habitcard/edit-habit-modal";
+import WeeklyDaysProgress from "@/components/weekly-days-progress";
 
 import { storage } from "@/utils/asyncStorage";
+import { migrateHabitsWithIds } from "@/utils/habitMigration";
 import type { Habit } from "@/types/habit";
 
 const STORAGE_KEY = "habits";
 const LAST_RESET_KEY = "lastResetTimestamp";
+const DAILY_PROGRESS_KEY = "dailyProgress";
 
 // Calculate total progress percentage across all habits
 function calculateTotalProgress(habits: Habit[]): number {
@@ -106,36 +110,95 @@ export default function HomeScreen() {
 
   const [habits, setHabits] = useState<Habit[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [dailyProgress, setDailyProgress] = useState<{
+    [date: string]: { habits: Habit[] };
+  }>({});
 
-  const [selectedHabit, setSelectedHabit] = useState<{
-    habit: (typeof habits)[0];
-    index: number;
-  } | null>(null);
+  const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [habitToEdit, setHabitToEdit] = useState<Habit | null>(null);
 
-  const handleIncrement = (habitIndex: number, newAmount: number) => {
+  const handleIncrement = (habitId: string, newAmount: number) => {
     setHabits((prevHabits) => {
-      const updated = [...prevHabits];
-      updated[habitIndex] = {
-        ...updated[habitIndex],
-        currentAmount: newAmount,
-      };
-      return updated;
+      return prevHabits.map((habit) =>
+        habit.id === habitId ? { ...habit, currentAmount: newAmount } : habit
+      );
     });
+  };
+
+  const handleDeleteHabit = async (habitId: string) => {
+    const habit = habits.find((h) => h.id === habitId);
+    if (!habit) return;
+
+    Alert.alert(
+      "Delete Habit",
+      `Are you sure you want to delete "${habit.name}"?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            const updatedHabits = habits.filter((h) => h.id !== habitId);
+            setHabits(updatedHabits);
+            await storage.setItem(STORAGE_KEY, updatedHabits);
+          },
+        },
+      ]
+    );
+  };
+
+  const handleEditHabit = (habit: Habit) => {
+    setHabitToEdit(habit);
+    setIsEditMode(true);
+  };
+
+  const handleUpdateHabit = async (updatedHabit: Habit) => {
+    setHabits((prevHabits) => {
+      return prevHabits.map((habit) =>
+        habit.id === updatedHabit.id ? updatedHabit : habit
+      );
+    });
+    setIsEditMode(false);
+    setHabitToEdit(null);
   };
 
   // Helper function to load habits from storage
   const loadHabits = useCallback(async () => {
     try {
-      const storedHabits = await storage.getItem<Habit[]>(STORAGE_KEY);
-      if (storedHabits) {
+      // Migrate habits to include IDs if needed
+      const migratedHabits = await migrateHabitsWithIds();
+
+      if (migratedHabits.length > 0) {
         // Check and perform daily reset if needed
-        const habitsAfterReset = await checkAndResetDaily(storedHabits);
+        const habitsAfterReset = await checkAndResetDaily(migratedHabits);
         setHabits(habitsAfterReset);
 
         // If habits were reset, save them
-        if (habitsAfterReset !== storedHabits) {
+        if (habitsAfterReset !== migratedHabits) {
           await storage.setItem(STORAGE_KEY, habitsAfterReset);
         }
+      } else {
+        // Try loading from storage if migration didn't return anything
+        const storedHabits = await storage.getItem<Habit[]>(STORAGE_KEY);
+        if (storedHabits) {
+          const habitsAfterReset = await checkAndResetDaily(storedHabits);
+          setHabits(habitsAfterReset);
+          if (habitsAfterReset !== storedHabits) {
+            await storage.setItem(STORAGE_KEY, habitsAfterReset);
+          }
+        }
+      }
+
+      // Load daily progress
+      const storedDailyProgress = await storage.getItem<{
+        [date: string]: { habits: Habit[] };
+      }>(DAILY_PROGRESS_KEY);
+      if (storedDailyProgress) {
+        setDailyProgress(storedDailyProgress);
       }
     } catch (error) {
       console.error("Error loading habits:", error);
@@ -161,6 +224,20 @@ export default function HomeScreen() {
       const saveHabits = async () => {
         try {
           await storage.setItem(STORAGE_KEY, habits);
+
+          // Save daily snapshot
+          const today = new Date().toISOString().split("T")[0];
+          const currentDailyProgress =
+            (await storage.getItem<{ [date: string]: { habits: Habit[] } }>(
+              DAILY_PROGRESS_KEY
+            )) || {};
+
+          currentDailyProgress[today] = {
+            habits: habits.map((h) => ({ ...h })), // Deep copy
+          };
+
+          await storage.setItem(DAILY_PROGRESS_KEY, currentDailyProgress);
+          setDailyProgress(currentDailyProgress);
         } catch (error) {
           console.error("Error saving habits:", error);
         }
@@ -181,27 +258,48 @@ export default function HomeScreen() {
       <SafeAreaView className="flex-1 bg-bg gap-4 p-4">
         <ActionButtons
           onDevPress={() => router.push("/dev-storage")}
+          onEditPress={() => setIsEditMode(!isEditMode)}
           onAddPress={() => router.push("/add-habit")}
+          isEditMode={isEditMode}
+        />
+        <WeeklyDaysProgress
+          dailyProgress={dailyProgress}
+          onDayPress={(date) => {
+            // Future: Navigate to that day's view
+            console.log("Day pressed:", date);
+          }}
         />
         <HeaderSection />
         <ProgressSection value={totalProgress} />
         <HabitsList
           habits={habits}
           onIncrement={handleIncrement}
-          onHabitPress={(habit, index) => {
-            setSelectedHabit({ habit, index });
+          onHabitPress={(habit) => {
+            setSelectedHabit(habit);
           }}
+          onEdit={handleEditHabit}
+          onDelete={handleDeleteHabit}
+          isEditMode={isEditMode}
         />
       </SafeAreaView>
       <HabitDetailModal
-        isOpen={selectedHabit !== null}
+        isOpen={selectedHabit !== null && !isEditMode}
         onClose={() => setSelectedHabit(null)}
-        habit={selectedHabit?.habit || null}
+        habit={selectedHabit}
         onUpdate={(newAmount) => {
           if (selectedHabit !== null) {
-            handleIncrement(selectedHabit.index, newAmount);
+            handleIncrement(selectedHabit.id, newAmount);
           }
         }}
+      />
+      <EditHabitModal
+        isOpen={isEditMode && habitToEdit !== null}
+        onClose={() => {
+          setIsEditMode(false);
+          setHabitToEdit(null);
+        }}
+        habit={habitToEdit}
+        onSave={handleUpdateHabit}
       />
     </>
   );
@@ -212,12 +310,14 @@ type ActionButtonsProps = {
   onDevPress: () => void;
   onEditPress?: () => void;
   onAddPress: () => void;
+  isEditMode?: boolean;
 };
 
 function ActionButtons({
   onDevPress,
   onEditPress,
   onAddPress,
+  isEditMode = false,
 }: ActionButtonsProps) {
   return (
     <View className="flex-row justify-end gap-3">
@@ -225,14 +325,20 @@ function ActionButtons({
         className="bg-card w-10 h-10 rounded-full items-center justify-center shadow-sm active:opacity-70"
         onPress={onDevPress}
       >
-        <AntDesign name="tool" size={18} color="#9CA3AF" />
+        <AntDesign name="tool" size={18} color="#3b82f6" />
       </Pressable>
       {onEditPress && (
         <Pressable
-          className="bg-card w-10 h-10 rounded-full items-center justify-center shadow-sm active:opacity-70"
+          className={`w-10 h-10 rounded-full items-center justify-center shadow-sm active:opacity-70 ${
+            isEditMode ? "bg-primary" : "bg-card"
+          }`}
           onPress={onEditPress}
         >
-          <AntDesign name="edit" size={18} color="#9CA3AF" />
+          <AntDesign
+            name="edit"
+            size={18}
+            color={isEditMode ? "white" : "#3b82f6"}
+          />
         </Pressable>
       )}
       <Pressable
@@ -250,10 +356,23 @@ type HeaderSectionProps = {
   title?: string;
 };
 
-function HeaderSection({ title = "Today (Hard Coded)" }: HeaderSectionProps) {
+function HeaderSection({ title }: HeaderSectionProps) {
+  // Get today's day name
+  const dayNames = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const todayName = dayNames[new Date().getDay()];
+  const displayTitle = title || todayName;
+
   return (
     <View>
-      <Text className="text-text font-bold text-3xl">{title}</Text>
+      <Text className="text-text font-bold text-3xl">{displayTitle}</Text>
     </View>
   );
 }
@@ -285,26 +404,40 @@ function ProgressSection({
 // Habits List Component
 type HabitsListProps = {
   habits: Habit[];
-  onIncrement: (index: number, newAmount: number) => void;
-  onHabitPress: (habit: Habit, index: number) => void;
+  onIncrement: (habitId: string, newAmount: number) => void;
+  onHabitPress: (habit: Habit) => void;
+  onEdit?: (habit: Habit) => void;
+  onDelete?: (habitId: string) => void;
+  isEditMode?: boolean;
 };
 
-function HabitsList({ habits, onIncrement, onHabitPress }: HabitsListProps) {
+function HabitsList({
+  habits,
+  onIncrement,
+  onHabitPress,
+  onEdit,
+  onDelete,
+  isEditMode = false,
+}: HabitsListProps) {
   return (
     <View>
-      {habits.map((habit, index) => (
+      {habits.map((habit) => (
         <HabitCard
-          key={index}
+          key={habit.id}
+          id={habit.id}
           icon={habit.icon}
           name={habit.name}
           goalAmount={habit.goalAmount}
           currentAmount={habit.currentAmount}
           onIncrement={(newAmount) => {
-            onIncrement(index, newAmount);
+            onIncrement(habit.id, newAmount);
           }}
           onPress={() => {
-            onHabitPress(habit, index);
+            onHabitPress(habit);
           }}
+          onEdit={onEdit ? () => onEdit(habit) : undefined}
+          onDelete={onDelete ? () => onDelete(habit.id) : undefined}
+          isEditMode={isEditMode}
         />
       ))}
     </View>

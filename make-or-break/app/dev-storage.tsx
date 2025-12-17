@@ -70,6 +70,7 @@ export default function DevStorageScreen() {
 
   const handleAddTestHabit = () => {
     const newHabit: Habit = {
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       icon: "star",
       name: "Test Habit",
       goalAmount: 5,
