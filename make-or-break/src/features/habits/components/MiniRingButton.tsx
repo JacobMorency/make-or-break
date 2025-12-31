@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { Ring } from '@/src/components/ui/Ring';
 import { Text } from '@/src/components/ui/Text';
 import Animated, {
@@ -39,11 +40,21 @@ export function MiniRingButton({
     scale.value = withTiming(1, { duration: 140 });
   };
 
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onPress();
+  };
+
+  const handleLongPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onLongPress();
+  };
+
   return (
     <AnimatedPressable
       style={[styles.container, animatedStyle]}
-      onPress={onPress}
-      onLongPress={onLongPress}
+      onPress={handlePress}
+      onLongPress={handleLongPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       hitSlop={8}

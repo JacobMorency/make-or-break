@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useHabitsStore } from '@/src/features/habits/store/habitsStore';
+import { getHabitProgress, getHabitCount, getOverallProgress, getWeeklyHabitCount } from '@/src/features/habits/model/selectors';
+import { getWeekdayIndex, addDays, todayISO, getWeekStartISO } from '@/src/lib/date';
 import { colors } from '@/src/theme/colors';
 import { spacing } from '@/src/theme/spacing';
 import { radius } from '@/src/theme/radius';
@@ -13,20 +16,30 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const [selectedDayIndex, setSelectedDayIndex] = useState(2); // Wednesday for now
+  const { habits, entries, selectedDate, setSelectedDate, incrementHabit, decrementHabit } = useHabitsStore();
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // Mock data for skeleton
-  const dailyHabits = [
-    { id: '1', name: 'Drink water', goal: 8, cadence: 'daily' as const, polarity: 'build' as const, progress: 0, count: 0 },
-    { id: '2', name: 'Go to the gym', goal: 6, cadence: 'daily' as const, polarity: 'build' as const, progress: 0, count: 0 },
-  ];
+  // Calculate selected date from weekday index
+  const selectedDayIndex = useMemo(() => {
+    return getWeekdayIndex(selectedDate);
+  }, [selectedDate]);
 
-  const weeklyHabits = [
-    { id: '3', name: 'Work on Side Projects', goal: 4, cadence: 'weekly' as const, polarity: 'build' as const, progress: 0, count: 0 },
-  ];
+  const handleWeekdaySelect = (index: number) => {
+    const today = todayISO();
+    const todayIndex = getWeekdayIndex(today);
+    const diff = index - todayIndex;
+    const newDate = addDays(today, diff);
+    setSelectedDate(newDate);
+  };
 
-  const overallProgress = 0; // Will be calculated later
+  // Filter and separate habits
+  const visibleHabits = habits.filter((h) => !h.archived);
+  const dailyHabits = visibleHabits.filter((h) => h.cadence === 'daily');
+  const weeklyHabits = visibleHabits.filter((h) => h.cadence === 'weekly');
+
+  // Calculate overall progress
+  const overallProgress = getOverallProgress(habits, selectedDate, entries);
+  const overallProgressPercent = Math.round(overallProgress * 100);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -57,7 +70,7 @@ export default function HomeScreen() {
         <View style={styles.weekdayContainer}>
           <WeekdaySelector
             selectedIndex={selectedDayIndex}
-            onSelect={setSelectedDayIndex}
+            onSelect={handleWeekdaySelect}
           />
         </View>
 
@@ -77,7 +90,7 @@ export default function HomeScreen() {
           />
           <View style={styles.ringLabel}>
             <Text variant="progressValue" style={styles.progressNumber}>
-              0
+              {overallProgressPercent}
             </Text>
             <Text variant="progressPercent" style={styles.progressPercent}>
               %
@@ -87,19 +100,23 @@ export default function HomeScreen() {
 
         {/* Daily Habits */}
         <View style={styles.habitsContainer}>
-          {dailyHabits.map((habit) => (
-            <HabitCard
-              key={habit.id}
-              name={habit.name}
-              goal={habit.goal}
-              cadence={habit.cadence}
-              polarity={habit.polarity}
-              progress={habit.progress}
-              count={habit.count}
-              onIncrement={() => {}}
-              onDecrement={() => {}}
-            />
-          ))}
+          {dailyHabits.map((habit) => {
+            const progress = getHabitProgress(habit, selectedDate, entries);
+            const count = getHabitCount(habit.id, selectedDate, entries);
+            return (
+              <HabitCard
+                key={habit.id}
+                name={habit.name}
+                goal={habit.goal}
+                cadence={habit.cadence}
+                polarity={habit.polarity}
+                progress={progress}
+                count={count}
+                onIncrement={() => incrementHabit(habit.id, selectedDate)}
+                onDecrement={() => decrementHabit(habit.id, selectedDate)}
+              />
+            );
+          })}
         </View>
 
         {/* Weekly Goals Section */}
@@ -109,19 +126,25 @@ export default function HomeScreen() {
 
         {/* Weekly Habits */}
         <View style={styles.habitsContainer}>
-          {weeklyHabits.map((habit) => (
-            <HabitCard
-              key={habit.id}
-              name={habit.name}
-              goal={habit.goal}
-              cadence={habit.cadence}
-              polarity={habit.polarity}
-              progress={habit.progress}
-              count={habit.count}
-              onIncrement={() => {}}
-              onDecrement={() => {}}
-            />
-          ))}
+          {weeklyHabits.map((habit) => {
+            const progress = getHabitProgress(habit, selectedDate, entries);
+            // For weekly habits, show the weekly count
+            const weekStart = getWeekStartISO(selectedDate);
+            const count = getWeeklyHabitCount(habit.id, weekStart, entries);
+            return (
+              <HabitCard
+                key={habit.id}
+                name={habit.name}
+                goal={habit.goal}
+                cadence={habit.cadence}
+                polarity={habit.polarity}
+                progress={progress}
+                count={count}
+                onIncrement={() => incrementHabit(habit.id, selectedDate)}
+                onDecrement={() => decrementHabit(habit.id, selectedDate)}
+              />
+            );
+          })}
         </View>
       </ScrollView>
     </SafeAreaView>
