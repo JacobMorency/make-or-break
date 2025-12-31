@@ -119,6 +119,7 @@ export default function HomeScreen() {
                 onDecrement={() => decrementHabit(habit.id, selectedDate)}
                 onArchive={() => archiveHabit(habit.id)}
                 onEdit={() => router.push(`/modal/habit-edit?id=${habit.id}` as any)}
+                onPress={() => router.push(`/habit/${habit.id}` as any)}
               />
             );
           })}
@@ -151,6 +152,7 @@ export default function HomeScreen() {
                 onDecrement={() => decrementHabit(habit.id, selectedDate)}
                 onArchive={() => archiveHabit(habit.id)}
                 onEdit={() => router.push(`/modal/habit-edit?id=${habit.id}` as any)}
+                onPress={() => router.push(`/habit/${habit.id}` as any)}
               />
             );
           })}
