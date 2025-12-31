@@ -60,7 +60,7 @@ export default function HomeScreen() {
           </Pressable>
           <Pressable
             style={styles.addButton}
-            onPress={() => router.push('/modal/habit-edit')}
+            onPress={() => router.push('/modal/habit-edit' as any)}
           >
             <IconSymbol name="plus" size={18} color={colors.textPrimary} />
           </Pressable>
