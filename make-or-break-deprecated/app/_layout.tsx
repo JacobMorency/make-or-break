@@ -1,0 +1,54 @@
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { View } from "react-native";
+import "../global.css";
+
+import { useColorScheme } from "@/hooks/use-color-scheme";
+
+export const unstable_settings = {
+  anchor: "(tabs)",
+};
+
+export default function RootLayout() {
+  const colorScheme = useColorScheme();
+
+  return (
+    <View className={colorScheme === "dark" ? "dark" : ""} style={{ flex: 1 }}>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="add-habit"
+            options={{
+              title: "Add Habit",
+              presentation: "card",
+              headerBackTitle: "Back",
+            }}
+          />
+          <Stack.Screen
+            name="dev-storage"
+            options={{
+              title: "Dev Storage Editor",
+              presentation: "card",
+              headerBackTitle: "Back",
+            }}
+          />
+          <Stack.Screen
+            name="icon-selector"
+            options={{
+              title: "Icon",
+              presentation: "card",
+              headerBackTitle: "Back",
+            }}
+          />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </View>
+  );
+}

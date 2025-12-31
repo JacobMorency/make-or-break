@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.egypts.make-or-break"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +20,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.egypts.makeorbreak"
     },
     "web": {
       "output": "static",
@@ -47,7 +49,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "7a64f02d-0a01-4bb8-b004-2d6d19af315e"
+        "projectId": "8d065a70-d3b5-45df-8775-9db5039f5c31"
       }
     },
     "owner": "egypts"
