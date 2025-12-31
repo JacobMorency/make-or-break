@@ -101,6 +101,13 @@ export default function HomeScreen() {
 
         {/* Daily Habits */}
         <View style={styles.habitsContainer}>
+          {dailyHabits.length === 0 && !isEditMode && (
+            <View style={styles.emptyState}>
+              <CardSubtitle style={styles.emptyStateText}>
+                No daily habits yet. Tap + to add one.
+              </CardSubtitle>
+            </View>
+          )}
           {dailyHabits.map((habit) => {
             const progress = getHabitProgress(habit, selectedDate, entries);
             const count = getHabitCount(habit.id, selectedDate, entries);
@@ -132,6 +139,13 @@ export default function HomeScreen() {
 
         {/* Weekly Habits */}
         <View style={styles.habitsContainer}>
+          {weeklyHabits.length === 0 && !isEditMode && (
+            <View style={styles.emptyState}>
+              <CardSubtitle style={styles.emptyStateText}>
+                No weekly habits yet. Tap + to add one.
+              </CardSubtitle>
+            </View>
+          )}
           {weeklyHabits.map((habit) => {
             const progress = getHabitProgress(habit, selectedDate, entries);
             // For weekly habits, show the weekly count
@@ -245,5 +259,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.screenPadding,
     marginTop: spacing['2xl'] - 2, // 26pt
     marginBottom: spacing.base,
+  },
+  emptyState: {
+    paddingVertical: spacing['2xl'],
+    alignItems: 'center',
+  },
+  emptyStateText: {
+    textAlign: 'center',
+    color: colors.textTertiary,
   },
 });

@@ -6,7 +6,7 @@ import { useHabitsStore } from '@/src/features/habits/store/habitsStore';
 import { HabitCard } from '@/src/features/habits/components/HabitCard';
 import { getHabitProgress, getHabitCount, getWeeklyHabitCount } from '@/src/features/habits/model/selectors';
 import { getWeekStartISO, todayISO } from '@/src/lib/date';
-import { ScreenTitle } from '@/src/components/ui/Text';
+import { ScreenTitle, CardSubtitle } from '@/src/components/ui/Text';
 import { colors } from '@/src/theme/colors';
 import { spacing } from '@/src/theme/spacing';
 
@@ -23,6 +23,13 @@ export default function HistoryScreen() {
         </View>
 
         <View style={styles.habitsContainer}>
+          {visibleHabits.length === 0 && (
+            <View style={styles.emptyState}>
+              <CardSubtitle style={styles.emptyStateText}>
+                No habits yet. Tap + on the Home tab to add one.
+              </CardSubtitle>
+            </View>
+          )}
           {visibleHabits.map((habit) => {
             const progress = getHabitProgress(habit, selectedDate, entries);
             let count: number;
@@ -72,6 +79,14 @@ const styles = StyleSheet.create({
   },
   habitsContainer: {
     paddingHorizontal: spacing.screenPadding,
+  },
+  emptyState: {
+    paddingVertical: spacing['2xl'],
+    alignItems: 'center',
+  },
+  emptyStateText: {
+    textAlign: 'center',
+    color: colors.textTertiary,
   },
 });
 
