@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -9,12 +10,24 @@ import { radius } from '@/src/theme/radius';
 import { spacing } from '@/src/theme/spacing';
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const tabBarWidth = 340;
+  const tabBarLeft = (width - tabBarWidth) / 2;
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [
+          styles.tabBar,
+          {
+            bottom: 12 + insets.bottom,
+            left: tabBarLeft,
+            transform: [{ translateX: 0 }],
+          },
+        ],
         tabBarActiveTintColor: colors.accentIndigo,
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarLabelStyle: styles.tabLabel,
@@ -54,9 +67,6 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   tabBar: {
     position: 'absolute',
-    bottom: 12,
-    left: '50%',
-    transform: [{ translateX: -170 }], // Half of 340pt width
     width: 340,
     height: 76,
     borderRadius: radius['2xl'],
