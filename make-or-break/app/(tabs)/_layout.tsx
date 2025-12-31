@@ -1,19 +1,15 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Tabs } from "expo-router";
+import React from "react";
+import { StyleSheet, Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { colors } from '@/src/theme/colors';
-import { radius } from '@/src/theme/radius';
-import { spacing } from '@/src/theme/spacing';
+import { HapticTab } from "@/components/haptic-tab";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { colors } from "@/src/theme/colors";
+import { radius } from "@/src/theme/radius";
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
-  const tabBarWidth = 340;
-  const tabBarLeft = (width - tabBarWidth) / 2;
 
   return (
     <Tabs
@@ -23,21 +19,21 @@ export default function TabLayout() {
         tabBarStyle: [
           styles.tabBar,
           {
-            bottom: 12 + insets.bottom,
-            left: tabBarLeft,
-            transform: [{ translateX: 0 }],
+            paddingBottom: Math.max(insets.bottom, 8),
+            height: 60 + Math.max(insets.bottom - 8, 0),
           },
         ],
         tabBarActiveTintColor: colors.accentIndigo,
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarLabelStyle: styles.tabLabel,
         tabBarItemStyle: styles.tabItem,
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
+          title: "Home",
+          tabBarIcon: ({ color }) => (
             <IconSymbol size={22} name="house.fill" color={color} />
           ),
         }}
@@ -45,7 +41,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="history"
         options={{
-          title: 'History',
+          title: "History",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={22} name="chart.bar.fill" color={color} />
           ),
@@ -54,7 +50,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
+          title: "Settings",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={22} name="gearshape.fill" color={color} />
           ),
@@ -66,29 +62,18 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    position: 'absolute',
-    width: 340,
-    height: 76,
-    borderRadius: radius['2xl'],
-    backgroundColor: 'rgba(28, 28, 30, 0.92)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.06)',
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    shadowColor: '#000000',
-    shadowOpacity: 0.35,
-    shadowOffset: { width: 0, height: 10 },
-    shadowRadius: 24,
-    elevation: 10,
+    backgroundColor: colors.surface,
+    borderTopWidth: 1,
+    borderTopColor: colors.stroke,
+    paddingTop: 8,
+    paddingHorizontal: 0,
   },
   tabLabel: {
     fontSize: 12,
-    fontWeight: '600',
-    lineHeight: 14,
+    fontWeight: "600",
     marginTop: 4,
   },
   tabItem: {
-    height: 56,
-    borderRadius: 28, // Active tab capsule radius
+    paddingHorizontal: 4,
   },
 });

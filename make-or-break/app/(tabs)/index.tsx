@@ -1,22 +1,40 @@
-import React, { useState, useMemo } from 'react';
-import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { useHabitsStore } from '@/src/features/habits/store/habitsStore';
-import { getHabitProgress, getHabitCount, getOverallProgress, getWeeklyHabitCount } from '@/src/features/habits/model/selectors';
-import { getWeekdayIndex, addDays, todayISO, getWeekStartISO } from '@/src/lib/date';
-import { colors } from '@/src/theme/colors';
-import { spacing } from '@/src/theme/spacing';
-import { radius } from '@/src/theme/radius';
-import { ScreenTitle, SectionTitle, Text } from '@/src/components/ui/Text';
-import { Ring } from '@/src/components/ui/Ring';
-import { WeekdaySelector } from '@/src/features/habits/components/WeekdaySelector';
-import { HabitCard } from '@/src/features/habits/components/HabitCard';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import React, { useState, useMemo } from "react";
+import { View, StyleSheet, ScrollView, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { useHabitsStore } from "@/src/features/habits/store/habitsStore";
+import {
+  getHabitProgress,
+  getHabitCount,
+  getOverallProgress,
+  getWeeklyHabitCount,
+} from "@/src/features/habits/model/selectors";
+import {
+  getWeekdayIndex,
+  addDays,
+  todayISO,
+  getWeekStartISO,
+} from "@/src/lib/date";
+import { colors } from "@/src/theme/colors";
+import { spacing } from "@/src/theme/spacing";
+import { radius } from "@/src/theme/radius";
+import { ScreenTitle, SectionTitle, Text } from "@/src/components/ui/Text";
+import { Ring } from "@/src/components/ui/Ring";
+import { WeekdaySelector } from "@/src/features/habits/components/WeekdaySelector";
+import { HabitCard } from "@/src/features/habits/components/HabitCard";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { habits, entries, selectedDate, setSelectedDate, incrementHabit, decrementHabit, archiveHabit } = useHabitsStore();
+  const {
+    habits,
+    entries,
+    selectedDate,
+    setSelectedDate,
+    incrementHabit,
+    decrementHabit,
+    archiveHabit,
+  } = useHabitsStore();
   const [isEditMode, setIsEditMode] = useState(false);
 
   // Calculate selected date from weekday index
@@ -34,15 +52,15 @@ export default function HomeScreen() {
 
   // Filter and separate habits
   const visibleHabits = habits.filter((h) => !h.archived);
-  const dailyHabits = visibleHabits.filter((h) => h.cadence === 'daily');
-  const weeklyHabits = visibleHabits.filter((h) => h.cadence === 'weekly');
+  const dailyHabits = visibleHabits.filter((h) => h.cadence === "daily");
+  const weeklyHabits = visibleHabits.filter((h) => h.cadence === "weekly");
 
   // Calculate overall progress
   const overallProgress = getOverallProgress(habits, selectedDate, entries);
   const overallProgressPercent = Math.round(overallProgress * 100);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -60,7 +78,7 @@ export default function HomeScreen() {
           </Pressable>
           <Pressable
             style={styles.addButton}
-            onPress={() => router.push('/modal/habit-edit' as any)}
+            onPress={() => router.push("/modal/habit-edit" as any)}
           >
             <IconSymbol name="plus" size={18} color={colors.textPrimary} />
           </Pressable>
@@ -124,7 +142,9 @@ export default function HomeScreen() {
                 onIncrement={() => incrementHabit(habit.id, selectedDate)}
                 onDecrement={() => decrementHabit(habit.id, selectedDate)}
                 onArchive={() => archiveHabit(habit.id)}
-                onEdit={() => router.push(`/modal/habit-edit?id=${habit.id}` as any)}
+                onEdit={() =>
+                  router.push(`/modal/habit-edit?id=${habit.id}` as any)
+                }
                 onPress={() => router.push(`/habit/${habit.id}` as any)}
               />
             );
@@ -164,7 +184,9 @@ export default function HomeScreen() {
                 onIncrement={() => incrementHabit(habit.id, selectedDate)}
                 onDecrement={() => decrementHabit(habit.id, selectedDate)}
                 onArchive={() => archiveHabit(habit.id)}
-                onEdit={() => router.push(`/modal/habit-edit?id=${habit.id}` as any)}
+                onEdit={() =>
+                  router.push(`/modal/habit-edit?id=${habit.id}` as any)
+                }
                 onPress={() => router.push(`/habit/${habit.id}` as any)}
               />
             );
@@ -187,9 +209,9 @@ const styles = StyleSheet.create({
     paddingBottom: 100, // Space for bottom nav
   },
   topControls: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
     paddingHorizontal: spacing.screenPadding,
     paddingTop: spacing.sm,
     height: 44,
@@ -201,13 +223,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.06)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: "rgba(255, 255, 255, 0.06)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   editButtonText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.textPrimary,
   },
   addButton: {
@@ -216,9 +238,9 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.06)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: "rgba(255, 255, 255, 0.06)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   weekdayContainer: {
     marginTop: spacing.sm,
@@ -228,27 +250,27 @@ const styles = StyleSheet.create({
     marginTop: spacing.md + 2, // 18pt
   },
   ringContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: spacing['2xl'],
-    marginBottom: spacing['2xl'],
-    position: 'relative',
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: spacing["2xl"],
+    marginBottom: spacing["2xl"],
+    position: "relative",
   },
   ringLabel: {
-    position: 'absolute',
-    flexDirection: 'row',
-    alignItems: 'baseline',
+    position: "absolute",
+    flexDirection: "row",
+    alignItems: "baseline",
     gap: 4,
   },
   progressNumber: {
     fontSize: 56,
-    fontWeight: '700',
+    fontWeight: "700",
     lineHeight: 64,
     color: colors.textPrimary,
   },
   progressPercent: {
     fontSize: 26,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.textPrimary,
   },
   habitsContainer: {
@@ -256,15 +278,15 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     paddingHorizontal: spacing.screenPadding,
-    marginTop: spacing['2xl'] - 2, // 26pt
+    marginTop: spacing["2xl"] - 2, // 26pt
     marginBottom: spacing.base,
   },
   emptyState: {
-    paddingVertical: spacing['2xl'],
-    alignItems: 'center',
+    paddingVertical: spacing["2xl"],
+    alignItems: "center",
   },
   emptyStateText: {
-    textAlign: 'center',
+    textAlign: "center",
     color: colors.textTertiary,
   },
 });
