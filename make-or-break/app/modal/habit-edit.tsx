@@ -115,6 +115,7 @@ export default function HabitEditModal() {
         <View style={styles.section}>
           <CardSubtitle style={styles.label}>Name</CardSubtitle>
           <TextInput
+            testID="habit-name-input"
             style={styles.input}
             value={name}
             onChangeText={setName}
@@ -239,7 +240,11 @@ export default function HabitEditModal() {
         </View>
 
         {/* Save Button */}
-        <Pressable style={styles.saveButton} onPress={handleSave}>
+        <Pressable
+          testID="save-habit-button"
+          style={styles.saveButton}
+          onPress={handleSave}
+        >
           <Text variant="cardTitle" style={styles.saveButtonText}>
             Save
           </Text>

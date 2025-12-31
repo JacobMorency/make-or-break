@@ -54,6 +54,7 @@ export function MiniRingButton({
 
   return (
     <AnimatedPressable
+      testID="mini-ring-button"
       style={[styles.container, animatedStyle]}
       onPress={handlePress}
       onLongPress={handleLongPress}

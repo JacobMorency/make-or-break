@@ -17,6 +17,7 @@ interface HabitsState {
   incrementHabit: (habitId: string, dateISO: string) => void;
   decrementHabit: (habitId: string, dateISO: string) => void;
   setSelectedDate: (dateISO: string) => void;
+  resetStore: () => void;
   
   // Internal
   _loadFromStorage: () => Promise<void>;
@@ -208,6 +209,14 @@ export const useHabitsStore = create<HabitsState>((set, get) => ({
   setSelectedDate: (dateISO) => {
     set({ selectedDate: dateISO });
     get()._saveToStorage();
+  },
+
+  resetStore: () => {
+    set({
+      habits: [],
+      entries: {},
+      selectedDate: todayISO(),
+    });
   },
 }));
 

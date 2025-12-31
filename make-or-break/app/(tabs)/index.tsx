@@ -18,7 +18,12 @@ import {
 import { useColors } from "@/src/theme/colors";
 import { spacing } from "@/src/theme/spacing";
 import { radius } from "@/src/theme/radius";
-import { ScreenTitle, SectionTitle, Text } from "@/src/components/ui/Text";
+import {
+  ScreenTitle,
+  SectionTitle,
+  Text,
+  CardSubtitle,
+} from "@/src/components/ui/Text";
 import { Ring } from "@/src/components/ui/Ring";
 import { WeekdaySelector } from "@/src/features/habits/components/WeekdaySelector";
 import { HabitCard } from "@/src/features/habits/components/HabitCard";
@@ -80,6 +85,7 @@ export default function HomeScreen() {
             </Text>
           </Pressable>
           <Pressable
+            testID="add-habit-button"
             style={styles.addButton}
             onPress={() => router.push("/modal/habit-edit" as any)}
           >
@@ -120,7 +126,7 @@ export default function HomeScreen() {
         </View>
 
         {/* Daily Habits */}
-        <View style={styles.habitsContainer}>
+        <View testID="habits-container" style={styles.habitsContainer}>
           {dailyHabits.length === 0 && !isEditMode && (
             <View style={styles.emptyState}>
               <CardSubtitle style={styles.emptyStateText}>

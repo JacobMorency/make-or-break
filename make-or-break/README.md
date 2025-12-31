@@ -42,6 +42,23 @@ To learn more about developing your project with Expo, look at the following res
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
 - [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
+## Testing
+
+Run the test suite:
+
+```bash
+npm test
+```
+
+The test suite includes high-level guardrail tests that verify core user flows:
+
+- **Increment/Decrement**: Tests that tapping increments progress and long-press decrements (clamped at 0)
+- **Weekly Calculations**: Verifies Monday-start week logic for weekly habits
+- **Habit Creation**: Tests that creating a habit causes it to appear on the Home screen
+- **Date Utilities**: Ensures week start calculations work correctly for different days
+
+These are guardrail tests focused on catching regressions from AI/LLM edits, not exhaustive unit tests.
+
 ## Join the community
 
 Join our community of developers creating universal apps.
