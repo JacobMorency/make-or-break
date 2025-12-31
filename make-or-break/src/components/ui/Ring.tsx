@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
+import React, { useEffect } from "react";
+import { View, StyleSheet } from "react-native";
+import Svg, { Circle } from "react-native-svg";
 import Animated, {
   useAnimatedProps,
   useSharedValue,
   withTiming,
-} from 'react-native-reanimated';
-import { colors } from '@/src/theme/colors';
+} from "react-native-reanimated";
+import { useColors } from "@/src/theme/colors";
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -25,10 +25,13 @@ export function Ring({
   strokeWidth,
   progress,
   showTrack = true,
-  trackColor = colors.stroke,
-  progressColor = colors.progress,
+  trackColor,
+  progressColor,
   startAngle = 90,
 }: RingProps) {
+  const colors = useColors();
+  const finalTrackColor = trackColor ?? colors.stroke;
+  const finalProgressColor = progressColor ?? colors.progress;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const center = size / 2;
@@ -48,7 +51,6 @@ export function Ring({
     };
   });
 
-
   return (
     <View style={[styles.container, { width: size, height: size }]}>
       <Svg width={size} height={size}>
@@ -57,7 +59,7 @@ export function Ring({
             cx={center}
             cy={center}
             r={radius}
-            stroke={trackColor}
+            stroke={finalTrackColor}
             strokeWidth={strokeWidth}
             fill="none"
             strokeLinecap="round"
@@ -67,7 +69,7 @@ export function Ring({
           cx={center}
           cy={center}
           r={radius}
-          stroke={progressColor}
+          stroke={finalProgressColor}
           strokeWidth={strokeWidth}
           fill="none"
           strokeLinecap="round"
@@ -82,8 +84,7 @@ export function Ring({
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
-

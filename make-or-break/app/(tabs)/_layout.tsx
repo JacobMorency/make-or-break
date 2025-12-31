@@ -5,11 +5,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { colors } from "@/src/theme/colors";
+import { useColors } from "@/src/theme/colors";
 import { radius } from "@/src/theme/radius";
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
+  const colors = useColors();
 
   return (
     <Tabs
@@ -17,16 +18,16 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: [
-          styles.tabBar,
+          getTabBarStyles(colors).tabBar,
           {
             paddingBottom: Math.max(insets.bottom, 8),
             height: 60 + Math.max(insets.bottom - 8, 0),
           },
         ],
-        tabBarActiveTintColor: colors.accentIndigo,
+        tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
-        tabBarLabelStyle: styles.tabLabel,
-        tabBarItemStyle: styles.tabItem,
+        tabBarLabelStyle: getTabBarStyles(colors).tabLabel,
+        tabBarItemStyle: getTabBarStyles(colors).tabItem,
       }}
     >
       <Tabs.Screen
@@ -60,20 +61,21 @@ export default function TabLayout() {
   );
 }
 
-const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: colors.stroke,
-    paddingTop: 8,
-    paddingHorizontal: 0,
-  },
-  tabLabel: {
-    fontSize: 12,
-    fontWeight: "600",
-    marginTop: 4,
-  },
-  tabItem: {
-    paddingHorizontal: 4,
-  },
-});
+const getTabBarStyles = (colors: ReturnType<typeof useColors>) =>
+  StyleSheet.create({
+    tabBar: {
+      backgroundColor: colors.surface,
+      borderTopWidth: 1,
+      borderTopColor: colors.stroke,
+      paddingTop: 8,
+      paddingHorizontal: 0,
+    },
+    tabLabel: {
+      fontSize: 12,
+      fontWeight: "600",
+      marginTop: 4,
+    },
+    tabItem: {
+      paddingHorizontal: 4,
+    },
+  });

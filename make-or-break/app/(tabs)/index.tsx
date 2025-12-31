@@ -15,7 +15,7 @@ import {
   todayISO,
   getWeekStartISO,
 } from "@/src/lib/date";
-import { colors } from "@/src/theme/colors";
+import { useColors } from "@/src/theme/colors";
 import { spacing } from "@/src/theme/spacing";
 import { radius } from "@/src/theme/radius";
 import { ScreenTitle, SectionTitle, Text } from "@/src/components/ui/Text";
@@ -26,6 +26,7 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const colors = useColors();
   const {
     habits,
     entries,
@@ -58,6 +59,8 @@ export default function HomeScreen() {
   // Calculate overall progress
   const overallProgress = getOverallProgress(habits, selectedDate, entries);
   const overallProgressPercent = Math.round(overallProgress * 100);
+
+  const styles = getStyles(colors);
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -197,96 +200,97 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 100, // Space for bottom nav
-  },
-  topControls: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    paddingHorizontal: spacing.screenPadding,
-    paddingTop: spacing.sm,
-    height: 44,
-    gap: spacing.md,
-  },
-  editButton: {
-    height: 44,
-    paddingHorizontal: spacing.lg,
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.06)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  editButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textPrimary,
-  },
-  addButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.06)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  weekdayContainer: {
-    marginTop: spacing.sm,
-  },
-  titleContainer: {
-    paddingHorizontal: spacing.screenPadding,
-    marginTop: spacing.md + 2, // 18pt
-  },
-  ringContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: spacing["2xl"],
-    marginBottom: spacing["2xl"],
-    position: "relative",
-  },
-  ringLabel: {
-    position: "absolute",
-    flexDirection: "row",
-    alignItems: "baseline",
-    gap: 4,
-  },
-  progressNumber: {
-    fontSize: 56,
-    fontWeight: "700",
-    lineHeight: 64,
-    color: colors.textPrimary,
-  },
-  progressPercent: {
-    fontSize: 26,
-    fontWeight: "600",
-    color: colors.textPrimary,
-  },
-  habitsContainer: {
-    paddingHorizontal: spacing.screenPadding,
-  },
-  sectionContainer: {
-    paddingHorizontal: spacing.screenPadding,
-    marginTop: spacing["2xl"] - 2, // 26pt
-    marginBottom: spacing.base,
-  },
-  emptyState: {
-    paddingVertical: spacing["2xl"],
-    alignItems: "center",
-  },
-  emptyStateText: {
-    textAlign: "center",
-    color: colors.textTertiary,
-  },
-});
+const getStyles = (colors: ReturnType<typeof useColors>) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingBottom: 100, // Space for bottom nav
+    },
+    topControls: {
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      alignItems: "center",
+      paddingHorizontal: spacing.screenPadding,
+      paddingTop: spacing.sm,
+      height: 44,
+      gap: spacing.md,
+    },
+    editButton: {
+      height: 44,
+      paddingHorizontal: spacing.lg,
+      backgroundColor: colors.surface,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: colors.stroke,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    editButtonText: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.textPrimary,
+    },
+    addButton: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.stroke,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    weekdayContainer: {
+      marginTop: spacing.sm,
+    },
+    titleContainer: {
+      paddingHorizontal: spacing.screenPadding,
+      marginTop: spacing.md + 2, // 18pt
+    },
+    ringContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: spacing["2xl"],
+      marginBottom: spacing["2xl"],
+      position: "relative",
+    },
+    ringLabel: {
+      position: "absolute",
+      flexDirection: "row",
+      alignItems: "baseline",
+      gap: 4,
+    },
+    progressNumber: {
+      fontSize: 56,
+      fontWeight: "700",
+      lineHeight: 64,
+      color: colors.textPrimary,
+    },
+    progressPercent: {
+      fontSize: 26,
+      fontWeight: "600",
+      color: colors.textPrimary,
+    },
+    habitsContainer: {
+      paddingHorizontal: spacing.screenPadding,
+    },
+    sectionContainer: {
+      paddingHorizontal: spacing.screenPadding,
+      marginTop: spacing["2xl"] - 2, // 26pt
+      marginBottom: spacing.base,
+    },
+    emptyState: {
+      paddingVertical: spacing["2xl"],
+      alignItems: "center",
+    },
+    emptyStateText: {
+      textAlign: "center",
+      color: colors.textTertiary,
+    },
+  });

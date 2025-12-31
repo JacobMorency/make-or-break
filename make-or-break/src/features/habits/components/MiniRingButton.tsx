@@ -3,6 +3,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Ring } from '@/src/components/ui/Ring';
 import { Text } from '@/src/components/ui/Text';
+import { useColors } from '@/src/theme/colors';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -26,6 +27,7 @@ export function MiniRingButton({
   onPress,
   onLongPress,
 }: MiniRingButtonProps) {
+  const colors = useColors();
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -64,13 +66,13 @@ export function MiniRingButton({
           size={46}
           strokeWidth={5}
           progress={progress}
-          trackColor="#2C2C2E"
-          progressColor="#FFFFFF"
+          trackColor={colors.stroke}
+          progressColor={colors.progress}
         />
         <View style={styles.countContainer}>
           <Text
             variant="cardTitle"
-            style={styles.countText}
+            style={[styles.countText, { color: colors.textPrimary }]}
           >
             {count}
           </Text>
@@ -102,7 +104,6 @@ const styles = StyleSheet.create({
   countText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FFFFFF',
   },
 });
 

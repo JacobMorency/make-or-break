@@ -4,7 +4,7 @@ import { Card } from '@/src/components/ui/Card';
 import { CardTitle, CardSubtitle, Text } from '@/src/components/ui/Text';
 import { MiniRingButton } from './MiniRingButton';
 import { spacing } from '@/src/theme/spacing';
-import { colors } from '@/src/theme/colors';
+import { useColors } from '@/src/theme/colors';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 
 interface HabitCardProps {
@@ -38,6 +38,8 @@ export function HabitCard({
   onArchive,
   onEdit,
 }: HabitCardProps) {
+  const colors = useColors();
+  const styles = getStyles(colors);
   const subtitle = cadence === 'daily' 
     ? `Goal: ${goal} / day`
     : `Goal: ${goal} / week`;
@@ -92,7 +94,7 @@ export function HabitCard({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors: ReturnType<typeof useColors>) => StyleSheet.create({
   card: {
     marginBottom: spacing.cardSpacing,
   },
@@ -115,7 +117,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#151518',
+    backgroundColor: colors.surfaceSecondary,
   },
   textContainer: {
     flex: 1,
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
     marginLeft: spacing.md,
   },
   editButtonText: {
-    color: colors.accentIndigo,
+    color: colors.primary,
   },
 });
 

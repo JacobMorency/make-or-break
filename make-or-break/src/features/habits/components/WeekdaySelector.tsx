@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
-import { colors } from '@/src/theme/colors';
+import { useColors } from '@/src/theme/colors';
 import { spacing } from '@/src/theme/spacing';
 import { Text } from '@/src/components/ui/Text';
 
@@ -13,6 +13,9 @@ interface WeekdaySelectorProps {
 }
 
 export function WeekdaySelector({ selectedIndex, onSelect }: WeekdaySelectorProps) {
+  const colors = useColors();
+  const styles = getStyles(colors);
+  
   return (
     <View style={styles.container}>
       {WEEKDAYS.map((day, index) => {
@@ -50,7 +53,7 @@ export function WeekdaySelector({ selectedIndex, onSelect }: WeekdaySelectorProp
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors: ReturnType<typeof useColors>) => StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -88,13 +91,13 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
   },
   dayTextSelected: {
-    color: colors.accentOrange,
+    color: colors.primary,
   },
   dot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: colors.accentOrange,
+    backgroundColor: colors.primary,
     marginTop: 10,
   },
 });
