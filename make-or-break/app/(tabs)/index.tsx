@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useHabitsStore } from '@/src/features/habits/store/habitsStore';
+import { useRouter as useRouterExpo } from 'expo-router';
 import { getHabitProgress, getHabitCount, getOverallProgress, getWeeklyHabitCount } from '@/src/features/habits/model/selectors';
 import { getWeekdayIndex, addDays, todayISO, getWeekStartISO } from '@/src/lib/date';
 import { colors } from '@/src/theme/colors';
@@ -16,7 +17,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { habits, entries, selectedDate, setSelectedDate, incrementHabit, decrementHabit } = useHabitsStore();
+  const { habits, entries, selectedDate, setSelectedDate, incrementHabit, decrementHabit, archiveHabit } = useHabitsStore();
   const [isEditMode, setIsEditMode] = useState(false);
 
   // Calculate selected date from weekday index
@@ -106,14 +107,18 @@ export default function HomeScreen() {
             return (
               <HabitCard
                 key={habit.id}
+                id={habit.id}
                 name={habit.name}
                 goal={habit.goal}
                 cadence={habit.cadence}
                 polarity={habit.polarity}
                 progress={progress}
                 count={count}
+                isEditMode={isEditMode}
                 onIncrement={() => incrementHabit(habit.id, selectedDate)}
                 onDecrement={() => decrementHabit(habit.id, selectedDate)}
+                onArchive={() => archiveHabit(habit.id)}
+                onEdit={() => router.push(`/modal/habit-edit?id=${habit.id}` as any)}
               />
             );
           })}
@@ -134,14 +139,18 @@ export default function HomeScreen() {
             return (
               <HabitCard
                 key={habit.id}
+                id={habit.id}
                 name={habit.name}
                 goal={habit.goal}
                 cadence={habit.cadence}
                 polarity={habit.polarity}
                 progress={progress}
                 count={count}
+                isEditMode={isEditMode}
                 onIncrement={() => incrementHabit(habit.id, selectedDate)}
                 onDecrement={() => decrementHabit(habit.id, selectedDate)}
+                onArchive={() => archiveHabit(habit.id)}
+                onEdit={() => router.push(`/modal/habit-edit?id=${habit.id}` as any)}
               />
             );
           })}
