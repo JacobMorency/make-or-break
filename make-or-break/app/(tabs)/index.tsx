@@ -3,7 +3,6 @@ import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useHabitsStore } from '@/src/features/habits/store/habitsStore';
-import { useRouter as useRouterExpo } from 'expo-router';
 import { getHabitProgress, getHabitCount, getOverallProgress, getWeeklyHabitCount } from '@/src/features/habits/model/selectors';
 import { getWeekdayIndex, addDays, todayISO, getWeekStartISO } from '@/src/lib/date';
 import { colors } from '@/src/theme/colors';
